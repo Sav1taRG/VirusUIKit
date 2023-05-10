@@ -48,23 +48,29 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         setupCollectionView()
         setupHealthyInfectedLabels()
         setupTimer()
-        setupPinchGesture()
     }
     
     private func setupHealthyInfectedLabels() {
+        // Healthy Label
         healthyLabel.translatesAutoresizingMaskIntoConstraints = false
         healthyLabel.text = "Здоровые: \(healthyCount)"
-        healthyLabel.backgroundColor = .white
-        healthyLabel.layer.borderWidth = 1
-        healthyLabel.layer.borderColor = UIColor.black.cgColor
+        healthyLabel.textColor = .label // Текст будет черным на светлом фоне, или белым на темном фоне
+        healthyLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold) // Установка размера и жирности шрифта
+        healthyLabel.backgroundColor = .green // Изменение цвета фона лейбла
+        healthyLabel.layer.cornerRadius = 8 // Закругление углов
+        healthyLabel.layer.masksToBounds = true // Обрезание фона по закругленным углам
         view.addSubview(healthyLabel)
         
+        // Infected Label
         infectedLabel.translatesAutoresizingMaskIntoConstraints = false
         infectedLabel.text = "Зараженные: \(infectedCount)"
-        infectedLabel.backgroundColor = .white
-        infectedLabel.layer.borderWidth = 1
-        infectedLabel.layer.borderColor = UIColor.black.cgColor
+        infectedLabel.textColor = .label
+        infectedLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        infectedLabel.backgroundColor = .red
+        infectedLabel.layer.cornerRadius = 8
+        infectedLabel.layer.masksToBounds = true
         view.addSubview(infectedLabel)
+        
         setupConstraints()
     }
     
@@ -113,30 +119,7 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             self?.spreadInfection()
         }
     }
-    
-    //MARK: - Pinch Gestures Setup
-    private func setupPinchGesture() {
-        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinchGesture(_:)))
-        collectionView.addGestureRecognizer(pinchGesture)
-    }
-    
-    @objc private func handlePinchGesture(_ gesture: UIPinchGestureRecognizer) {
-        guard let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
-        
-        if gesture.state == .began || gesture.state == .changed {
-            scale *= gesture.scale
-            gesture.scale = 1.0
-            
-            let minSize: CGFloat = 50
-            let maxSize: CGFloat = 150
-            let newSize = CGSize(width: max(min(flowLayout.itemSize.width * scale, maxSize), minSize),
-                                 height: max(min(flowLayout.itemSize.height * scale, maxSize), minSize))
-            flowLayout.itemSize = newSize
-            flowLayout.invalidateLayout()
-        }
-    }
-    
-    
+
     // MARK: - UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -153,7 +136,9 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         infectPerson(at: indexPath.item)
-        collectionView.reloadItems(at: [indexPath])
+        collectionView.performBatchUpdates({
+            collectionView.reloadItems(at: [indexPath])
+        }, completion: nil)
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout
@@ -161,20 +146,21 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let screenWidth = UIScreen.main.bounds.width
         let totalSpacing = CGFloat(columns - 1) * 10
-        let width = (screenWidth - totalSpacing) / CGFloat(columns) * scale
+        let baseWidth = (screenWidth - totalSpacing) / CGFloat(columns)
+        let width = baseWidth * scale
         let height = width
-        return CGSize(width: width, height: width)
+        return CGSize(width: width, height: height)
     }
+
     
     // MARK: - Infection logic
     
     private func infectPerson(at index: Int) {
-        if people[index].healthStatus == .healthy {
-            people[index].healthStatus = .infected
-            infectedCount += 1
-            healthyCount -= 1
-            updateHealthyInfectedLabels()
-        }
+        guard people[index].healthStatus == .healthy else { return }
+        people[index].healthStatus = .infected
+        infectedCount += 1
+        healthyCount -= 1
+        updateHealthyInfectedLabels()
     }
     
     private func updateHealthyInfectedLabels() {
@@ -188,7 +174,13 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             for (index, person) in self.people.enumerated() {
                 if person.healthStatus == .infected {
                     let neighbors = self.getNeighbors(of: index)
-                    let infectedNeighbors = neighbors.filter { self.people[$0].healthStatus == .healthy }.shuffled().prefix(self.infectionFactor)
+                    let healthyNeighbors = neighbors.filter { self.people[$0].healthStatus == .healthy }
+                    if healthyNeighbors.isEmpty { continue }
+                    
+                    // Выбираем случайное количество заражаемых соседей
+                    let randomCount = Int.random(in: 0...min(healthyNeighbors.count, self.infectionFactor))
+                    let infectedNeighbors = healthyNeighbors.shuffled().prefix(randomCount)
+                    
                     newInfected.formUnion(infectedNeighbors)
                 }
             }
@@ -202,17 +194,17 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         }
     }
     
+    
+    
     private func getNeighbors(of index: Int) -> [Int] {
         let rows = groupSize / columns
         let row = index / columns
         let column = index % columns
         var neighbors = [Int]()
         
-        for rowOffset in -1...1 {
-            for columnOffset in -1...1 {
-                if rowOffset == 0 && columnOffset == 0 {
-                    continue
-                }
+        for rowOffset in -1..<2 {
+            for columnOffset in -1..<2 {
+                if rowOffset == 0 && columnOffset == 0 { continue }
                 let newRow = row + rowOffset
                 let newColumn = column + columnOffset
                 if newRow >= 0 && newRow < rows && newColumn >= 0 && newColumn < columns {
@@ -220,8 +212,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
                 }
             }
         }
-        
         return neighbors
     }
-    
 }
