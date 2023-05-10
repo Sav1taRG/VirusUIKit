@@ -18,7 +18,8 @@ VirusUIKit is a simple iOS application that simulates the spread of a virus with
 
 ## Screenshot
 
-![Virus](https://github.com/Sav1taRG/VirusUIKit/assets/52829649/dde2ffd3-3203-4f8c-9e13-a70575190ac5)
+<img src="https://github.com/Sav1taRG/VirusUIKit/assets/52829649/dde2ffd3-3203-4f8c-9e13-a70575190ac5" style="max-width:50%">
+
 
 ## Dependencies
 - UIKit
