@@ -7,8 +7,9 @@
 
 import Foundation
 
-enum HealthStatus {
-    case healthy, infected
+enum HealthStatus: Character {
+    case healthy = "😊"
+    case infected = "😷"
 }
 
 struct Person: Identifiable {

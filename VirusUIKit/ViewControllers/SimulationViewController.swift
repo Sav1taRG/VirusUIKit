@@ -8,6 +8,9 @@
 import UIKit
 
 class SimulationViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    // MARK: - Private properties
+    
     private let groupSize: Int
     private let infectionFactor: Int
     private let period: Double
@@ -20,6 +23,7 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     private var collectionView: UICollectionView!
     private var scale: CGFloat = 1.0
     
+    // MARK: - Initializers
     
     init(groupSize: Int, infectionFactor: Int, period: Double, columns: Int = 10) {
         self.groupSize = groupSize
@@ -39,10 +43,12 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - ViewController Lifecycle Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Симуляция"
+        title = "Simulation"
         view.backgroundColor = .systemBackground
         
         setupCollectionView()
@@ -50,20 +56,22 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         setupTimer()
     }
     
+    // MARK: - Setup UI Methods
+    
     private func setupHealthyInfectedLabels() {
         // Healthy Label
         healthyLabel.translatesAutoresizingMaskIntoConstraints = false
-        healthyLabel.text = "Здоровые: \(healthyCount)"
-        healthyLabel.textColor = .label // Текст будет черным на светлом фоне, или белым на темном фоне
-        healthyLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold) // Установка размера и жирности шрифта
-        healthyLabel.backgroundColor = .green // Изменение цвета фона лейбла
-        healthyLabel.layer.cornerRadius = 8 // Закругление углов
-        healthyLabel.layer.masksToBounds = true // Обрезание фона по закругленным углам
+        healthyLabel.text = "Healthy: \(healthyCount)"
+        healthyLabel.textColor = .label
+        healthyLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        healthyLabel.backgroundColor = .green
+        healthyLabel.layer.cornerRadius = 8
+        healthyLabel.layer.masksToBounds = true
         view.addSubview(healthyLabel)
         
         // Infected Label
         infectedLabel.translatesAutoresizingMaskIntoConstraints = false
-        infectedLabel.text = "Зараженные: \(infectedCount)"
+        infectedLabel.text = "Infected: \(infectedCount)"
         infectedLabel.textColor = .label
         infectedLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
         infectedLabel.backgroundColor = .red
@@ -79,10 +87,10 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         NSLayoutConstraint.activate([
             // Healthy and Infected Labels
             healthyLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            healthyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            healthyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
             infectedLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            infectedLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            infectedLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             // Collection View
             collectionView.topAnchor.constraint(equalTo: infectedLabel.bottomAnchor, constant: 10),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -112,7 +120,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         view.addSubview(collectionView)
         
     }
-    
     
     private func setupTimer() {
         Timer.scheduledTimer(withTimeInterval: period, repeats: true) { [weak self] _ in
@@ -153,7 +160,7 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     }
 
     
-    // MARK: - Infection logic
+    // MARK: - Infection logic methods
     
     private func infectPerson(at index: Int) {
         guard people[index].healthStatus == .healthy else { return }
@@ -164,8 +171,8 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     private func updateHealthyInfectedLabels() {
-        healthyLabel.text = "Здоровые: \(healthyCount)"
-        infectedLabel.text = "Зараженные: \(infectedCount)"
+        healthyLabel.text = "Healthy: \(healthyCount)"
+        infectedLabel.text = "Infected: \(infectedCount)"
     }
     
     private func spreadInfection() {
@@ -177,7 +184,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
                     let healthyNeighbors = neighbors.filter { self.people[$0].healthStatus == .healthy }
                     if healthyNeighbors.isEmpty { continue }
                     
-                    // Выбираем случайное количество заражаемых соседей
                     let randomCount = Int.random(in: 0...min(healthyNeighbors.count, self.infectionFactor))
                     let infectedNeighbors = healthyNeighbors.shuffled().prefix(randomCount)
                     
@@ -193,8 +199,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             }
         }
     }
-    
-    
     
     private func getNeighbors(of index: Int) -> [Int] {
         let rows = groupSize / columns
