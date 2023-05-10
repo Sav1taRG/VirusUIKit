@@ -24,6 +24,7 @@ class SettingsViewController: UIViewController {
         view.backgroundColor = .systemBackground
         title = "Virus Simulation Settings"
         setupUI()
+        addDoneButtonOnKeyboard()
         setupConstraints()
     }
     
@@ -34,6 +35,7 @@ class SettingsViewController: UIViewController {
         groupSizeLabel.text = "Group Size:"
         view.addSubview(groupSizeLabel)
         
+        groupSizeTextField.delegate = self
         groupSizeTextField.placeholder = "Enter group size"
         groupSizeTextField.borderStyle = .roundedRect
         groupSizeTextField.keyboardType = .numberPad
@@ -44,6 +46,7 @@ class SettingsViewController: UIViewController {
         infectionFactorLabel.text = "Infection Factor:"
         view.addSubview(infectionFactorLabel)
         
+        infectionFactorTextField.delegate = self
         infectionFactorTextField.placeholder = "Enter infection factor"
         infectionFactorTextField.borderStyle = .roundedRect
         infectionFactorTextField.keyboardType = .numberPad
@@ -54,6 +57,7 @@ class SettingsViewController: UIViewController {
         periodLabel.text = "Timer:"
         view.addSubview(periodLabel)
         
+        periodTextField.delegate = self
         periodTextField.placeholder = "Delay in seconds"
         periodTextField.borderStyle = .roundedRect
         periodTextField.keyboardType = .numberPad
@@ -80,17 +84,17 @@ class SettingsViewController: UIViewController {
                 constant: 20),
             groupSizeLabel.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             
             groupSizeTextField.topAnchor.constraint(
                 equalTo: groupSizeLabel.bottomAnchor,
                 constant: 10),
             groupSizeTextField.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             groupSizeTextField.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor,
-                constant: -20)
+                constant: -16)
         ])
         
         // Infection Factor
@@ -100,27 +104,27 @@ class SettingsViewController: UIViewController {
                 constant: 20),
             infectionFactorLabel.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             
             infectionFactorTextField.topAnchor.constraint(
                 equalTo: infectionFactorLabel.bottomAnchor,
                 constant: 10),
             infectionFactorTextField.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             infectionFactorTextField.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor,
-                constant: -20)
+                constant: -16)
         ])
         
-        // Period
+        // Timer
         NSLayoutConstraint.activate([
             periodLabel.topAnchor.constraint(
                 equalTo: infectionFactorTextField.bottomAnchor,
                 constant: 20),
             periodLabel.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             
             
             periodTextField.topAnchor.constraint(
@@ -128,7 +132,7 @@ class SettingsViewController: UIViewController {
                 constant: 10),
             periodTextField.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             periodTextField.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor,
                 constant: -20)
@@ -138,17 +142,47 @@ class SettingsViewController: UIViewController {
         NSLayoutConstraint.activate([
             startButton.topAnchor.constraint(
                 equalTo: periodTextField.bottomAnchor,
-                constant: 40),
+                constant: 30),
             startButton.leadingAnchor.constraint(
                 equalTo: view.leadingAnchor,
-                constant: 20),
+                constant: 16),
             startButton.trailingAnchor.constraint(
                 equalTo: view.trailingAnchor,
-                constant: -20),
+                constant: -16),
             startButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
+    private func createToolbar(withReturnTitle title: String) -> UIToolbar {
+        let doneToolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
+        doneToolbar.barStyle = .default
+
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton: UIBarButtonItem = UIBarButtonItem(title: title, style: .done, target: self, action: #selector(self.doneButtonAction))
+
+        let items = [flexSpace, doneButton]
+        doneToolbar.items = items
+        doneToolbar.sizeToFit()
+
+        return doneToolbar
+    }
+
+    private func addDoneButtonOnKeyboard() {
+        groupSizeTextField.inputAccessoryView = createToolbar(withReturnTitle: "Next")
+        infectionFactorTextField.inputAccessoryView = createToolbar(withReturnTitle: "Next")
+        periodTextField.inputAccessoryView = createToolbar(withReturnTitle: "Done")
+    }
+
+    @objc private func doneButtonAction() {
+        if groupSizeTextField.isFirstResponder {
+            infectionFactorTextField.becomeFirstResponder()
+        } else if infectionFactorTextField.isFirstResponder {
+            periodTextField.becomeFirstResponder()
+        } else if periodTextField.isFirstResponder {
+            periodTextField.resignFirstResponder()
+        }
+    }
+
     // MARK: - Private Methods
     
     private func validateInput() -> (groupSize: Int, infectionFactor: Int, period: Double)? {
@@ -198,3 +232,17 @@ class SettingsViewController: UIViewController {
         present(alert, animated: true)
     }
 }
+
+extension SettingsViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == groupSizeTextField {
+            infectionFactorTextField.becomeFirstResponder()
+        } else if textField == infectionFactorTextField {
+            periodTextField.becomeFirstResponder()
+        } else if textField == periodTextField {
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+}
+

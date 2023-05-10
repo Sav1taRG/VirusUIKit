@@ -9,7 +9,7 @@ import Foundation
 
 enum HealthStatus: Character {
     case healthy = "😊"
-    case infected = "😷"
+    case infected = "🥵"
 }
 
 struct Person: Identifiable {

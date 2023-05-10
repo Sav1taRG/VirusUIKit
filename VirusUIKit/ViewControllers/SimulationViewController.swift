@@ -67,6 +67,8 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         healthyLabel.backgroundColor = .green
         healthyLabel.layer.cornerRadius = 8
         healthyLabel.layer.masksToBounds = true
+        healthyLabel.textAlignment = .center
+        healthyLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.addSubview(healthyLabel)
         
         // Infected Label
@@ -77,6 +79,8 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         infectedLabel.backgroundColor = .red
         infectedLabel.layer.cornerRadius = 8
         infectedLabel.layer.masksToBounds = true
+        infectedLabel.textAlignment = .center
+        infectedLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.addSubview(infectedLabel)
         
         setupConstraints()
@@ -86,16 +90,33 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             // Healthy and Infected Labels
-            healthyLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            healthyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            healthyLabel.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 10),
+            healthyLabel.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 16),
+            healthyLabel.widthAnchor.constraint(equalToConstant: 140),
             
-            infectedLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            infectedLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            infectedLabel.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: 10),
+            infectedLabel.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -16),
+            infectedLabel.widthAnchor.constraint(equalToConstant: 140),
             // Collection View
-            collectionView.topAnchor.constraint(equalTo: infectedLabel.bottomAnchor, constant: 10),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.topAnchor.constraint(
+                equalTo: infectedLabel.bottomAnchor,
+                constant: 10),
+            collectionView.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 16),
+            collectionView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -16),
+            collectionView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -115,7 +136,10 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
-        collectionView.register(PersonCell.self, forCellWithReuseIdentifier: PersonCell.reuseIdentifier)
+        collectionView.register(
+            PersonCell.self,
+            forCellWithReuseIdentifier: PersonCell.reuseIdentifier
+        )
         
         view.addSubview(collectionView)
         
