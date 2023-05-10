@@ -16,8 +16,6 @@ class SettingsViewController: UIViewController {
     private let infectionFactorTextField = UITextField()
     private let periodLabel = UILabel()
     private let periodTextField = UITextField()
-    private let columnsLabel = UILabel()
-    private let columnsTextField = UITextField()
     private let startButton = UIButton()
     
     override func viewDidLoad() {
@@ -56,15 +54,6 @@ class SettingsViewController: UIViewController {
         periodTextField.text = "1"
         view.addSubview(periodTextField)
         
-        // Columns
-        columnsLabel.text = "Columns:"
-        view.addSubview(columnsLabel)
-        
-        columnsTextField.borderStyle = .roundedRect
-        columnsTextField.keyboardType = .numberPad
-        columnsTextField.text = "10"
-        view.addSubview(columnsTextField)
-        
         // Start Button
         startButton.setTitle("Start Simulation", for: .normal)
         startButton.backgroundColor = .systemBlue
@@ -75,7 +64,7 @@ class SettingsViewController: UIViewController {
     
     private func setupConstraints() {
         // Set up UI elements to use Auto Layout
-        [groupSizeLabel, groupSizeTextField, infectionFactorLabel, infectionFactorTextField, periodLabel, periodTextField, columnsLabel, columnsTextField, startButton].forEach {
+        [groupSizeLabel, groupSizeTextField, infectionFactorLabel, infectionFactorTextField, periodLabel, periodTextField, startButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -109,19 +98,9 @@ class SettingsViewController: UIViewController {
             periodTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
         
-        // Columns
-        NSLayoutConstraint.activate([
-            columnsLabel.topAnchor.constraint(equalTo: periodTextField.bottomAnchor, constant: 20),
-            columnsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            
-            columnsTextField.topAnchor.constraint(equalTo: columnsLabel.bottomAnchor, constant: 10),
-            columnsTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            columnsTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
-        ])
-        
         // Start Button
         NSLayoutConstraint.activate([
-            startButton.topAnchor.constraint(equalTo: columnsTextField.bottomAnchor, constant: 40),
+            startButton.topAnchor.constraint(equalTo: periodTextField.bottomAnchor, constant: 40),
             startButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             startButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             startButton.heightAnchor.constraint(equalToConstant: 50)
@@ -149,19 +128,13 @@ class SettingsViewController: UIViewController {
             return
         }
         
-        guard let columnsText = columnsTextField.text, let columns = Int(columnsText), columns > 0 else {
-            print("columns problem")
-            showAlert()
-            return
-        }
-        
         guard let navController = self.navigationController else {
             print("navigationController problem")
             showAlert()
             return
         }
 
-        let simulationViewController = SimulationViewController(groupSize: groupSize, infectionFactor: infectionFactor, period: period, columns: columns)
+        let simulationViewController = SimulationViewController(groupSize: groupSize, infectionFactor: infectionFactor, period: period)
         navController.pushViewController(simulationViewController, animated: true)
     }
 

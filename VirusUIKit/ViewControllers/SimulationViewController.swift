@@ -45,8 +45,8 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         title = "Симуляция"
         view.backgroundColor = .systemBackground
         
-        setupHealthyInfectedLabels()
         setupCollectionView()
+        setupHealthyInfectedLabels()
         setupTimer()
         setupPinchGesture()
     }
@@ -54,22 +54,34 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     private func setupHealthyInfectedLabels() {
         healthyLabel.translatesAutoresizingMaskIntoConstraints = false
         healthyLabel.text = "Здоровые: \(healthyCount)"
+        healthyLabel.backgroundColor = .white
+        healthyLabel.layer.borderWidth = 1
+        healthyLabel.layer.borderColor = UIColor.black.cgColor
         view.addSubview(healthyLabel)
         
         infectedLabel.translatesAutoresizingMaskIntoConstraints = false
         infectedLabel.text = "Зараженные: \(infectedCount)"
+        infectedLabel.backgroundColor = .white
+        infectedLabel.layer.borderWidth = 1
+        infectedLabel.layer.borderColor = UIColor.black.cgColor
         view.addSubview(infectedLabel)
         setupConstraints()
     }
     
     private func setupConstraints() {
-        // Healthy and Infected Labels
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
+            // Healthy and Infected Labels
             healthyLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             healthyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
             infectedLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            infectedLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            infectedLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            // Collection View
+            collectionView.topAnchor.constraint(equalTo: infectedLabel.bottomAnchor, constant: 10),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -78,14 +90,23 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         layout.minimumInteritemSpacing = 10
         layout.minimumLineSpacing = 10
         
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        let topPadding: CGFloat = 50
+        collectionView = UICollectionView(
+            frame: CGRect(
+                x: view.bounds.origin.x,
+                y: view.bounds.origin.y + topPadding,
+                width: view.bounds.width,
+                height: view.bounds.height - topPadding),
+            collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
         collectionView.register(PersonCell.self, forCellWithReuseIdentifier: PersonCell.reuseIdentifier)
         
         view.addSubview(collectionView)
+        
     }
+    
     
     private func setupTimer() {
         Timer.scheduledTimer(withTimeInterval: period, repeats: true) { [weak self] _ in
@@ -105,8 +126,11 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         if gesture.state == .began || gesture.state == .changed {
             scale *= gesture.scale
             gesture.scale = 1.0
-            let newSize = CGSize(width: flowLayout.itemSize.width * gesture.scale,
-                                 height: flowLayout.itemSize.height * gesture.scale)
+            
+            let minSize: CGFloat = 50
+            let maxSize: CGFloat = 150
+            let newSize = CGSize(width: max(min(flowLayout.itemSize.width * scale, maxSize), minSize),
+                                 height: max(min(flowLayout.itemSize.height * scale, maxSize), minSize))
             flowLayout.itemSize = newSize
             flowLayout.invalidateLayout()
         }
@@ -135,7 +159,10 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
     // MARK: - UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (view.bounds.width - CGFloat(columns - 1) * 10) / CGFloat(columns)
+        let screenWidth = UIScreen.main.bounds.width
+        let totalSpacing = CGFloat(columns - 1) * 10
+        let width = (screenWidth - totalSpacing) / CGFloat(columns) * scale
+        let height = width
         return CGSize(width: width, height: width)
     }
     
