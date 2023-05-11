@@ -15,6 +15,7 @@
 		304A1CC72A0BE7E8005B088B /* PersonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304A1CC62A0BE7E8005B088B /* PersonCell.swift */; };
 		304A1CC92A0BE7FF005B088B /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304A1CC82A0BE7FF005B088B /* SettingsViewController.swift */; };
 		304A1CCB2A0BE85D005B088B /* SimulationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304A1CCA2A0BE85D005B088B /* SimulationViewController.swift */; };
+		30E81FC22A0CFC67007A58B4 /* InputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E81FC12A0CFC67007A58B4 /* InputValidator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		304A1CC62A0BE7E8005B088B /* PersonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonCell.swift; sourceTree = "<group>"; };
 		304A1CC82A0BE7FF005B088B /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		304A1CCA2A0BE85D005B088B /* SimulationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationViewController.swift; sourceTree = "<group>"; };
+		30E81FC12A0CFC67007A58B4 /* InputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputValidator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 			children = (
 				304A1CCF2A0C08F3005B088B /* View */,
 				304A1CCE2A0C08EE005B088B /* Model */,
+				30E81FC32A0CFE47007A58B4 /* Services */,
 				304A1CCD2A0C08D9005B088B /* CollectionViewCell */,
 				304A1CCC2A0C0855005B088B /* ViewControllers */,
 				304A1CD02A0C09B3005B088B /* Sourse */,
@@ -119,6 +122,14 @@
 				304A1CBC2A0BE12B005B088B /* Info.plist */,
 			);
 			path = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		30E81FC32A0CFE47007A58B4 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				30E81FC12A0CFC67007A58B4 /* InputValidator.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,6 +206,7 @@
 				304A1CC92A0BE7FF005B088B /* SettingsViewController.swift in Sources */,
 				304A1CAF2A0BE129005B088B /* AppDelegate.swift in Sources */,
 				304A1CCB2A0BE85D005B088B /* SimulationViewController.swift in Sources */,
+				30E81FC22A0CFC67007A58B4 /* InputValidator.swift in Sources */,
 				304A1CC32A0BE7B5005B088B /* Person.swift in Sources */,
 				304A1CB12A0BE129005B088B /* SceneDelegate.swift in Sources */,
 			);
@@ -331,6 +343,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -361,6 +374,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

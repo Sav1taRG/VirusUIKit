@@ -24,11 +24,11 @@ class PersonCell: UICollectionViewCell {
     func configure(with person: Person) {
         switch person.healthStatus {
         case .healthy:
-            backgroundColor = .clear
             label.text = String(HealthStatus.healthy.rawValue)
+            label.backgroundColor = UIColor.green.withAlphaComponent(0.3)
         case .infected:
-            backgroundColor = .clear
             label.text = String(HealthStatus.infected.rawValue)
+            label.backgroundColor = UIColor.red.withAlphaComponent(0.3)
         }
     }
     
@@ -38,6 +38,8 @@ class PersonCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: 25)
+        label.layer.cornerRadius = 10
+        label.clipsToBounds = true
 
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: contentView.topAnchor),

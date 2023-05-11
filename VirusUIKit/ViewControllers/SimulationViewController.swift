@@ -64,7 +64,7 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         healthyLabel.text = "Healthy: \(healthyCount)"
         healthyLabel.textColor = .label
         healthyLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        healthyLabel.backgroundColor = .green
+        healthyLabel.backgroundColor = UIColor.green.withAlphaComponent(0.3)
         healthyLabel.layer.cornerRadius = 8
         healthyLabel.layer.masksToBounds = true
         healthyLabel.textAlignment = .center
@@ -76,7 +76,7 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
         infectedLabel.text = "Infected: \(infectedCount)"
         infectedLabel.textColor = .label
         infectedLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        infectedLabel.backgroundColor = .red
+        infectedLabel.backgroundColor = UIColor.red.withAlphaComponent(0.3)
         infectedLabel.layer.cornerRadius = 8
         infectedLabel.layer.masksToBounds = true
         infectedLabel.textAlignment = .center

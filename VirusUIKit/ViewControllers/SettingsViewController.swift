@@ -47,7 +47,7 @@ class SettingsViewController: UIViewController {
         view.addSubview(infectionFactorLabel)
         
         infectionFactorTextField.delegate = self
-        infectionFactorTextField.placeholder = "Enter infection factor"
+        infectionFactorTextField.placeholder = "Enter infection factor 1 - 8"
         infectionFactorTextField.borderStyle = .roundedRect
         infectionFactorTextField.keyboardType = .numberPad
         infectionFactorTextField.text = ""
@@ -186,26 +186,8 @@ class SettingsViewController: UIViewController {
     // MARK: - Private Methods
     
     private func validateInput() -> (groupSize: Int, infectionFactor: Int, period: Double)? {
-        guard let groupSizeText = groupSizeTextField.text,
-              let groupSize = Int(groupSizeText),
-              groupSize > 0 else {
-            return nil
+            return InputValidator.validate(groupSize: groupSizeTextField.text, infectionFactor: infectionFactorTextField.text, period: periodTextField.text)
         }
-        
-        guard let infectionFactorText = infectionFactorTextField.text,
-              let infectionFactor = Int(infectionFactorText),
-              infectionFactor > 0 else {
-            return nil
-        }
-        
-        guard let periodText = periodTextField.text,
-              let period = Double(periodText),
-              period > 0 else {
-            return nil
-        }
-        
-        return (groupSize, infectionFactor, period)
-    }
     
     @objc private func startButtonTapped() {
         guard let input = validateInput(),
