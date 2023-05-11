@@ -208,8 +208,8 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
                     let healthyNeighbors = neighbors.filter { self.people[$0].healthStatus == .healthy }
                     if healthyNeighbors.isEmpty { continue }
                     
-                    let randomCount = Int.random(in: 0...min(healthyNeighbors.count, self.infectionFactor))
-                    let infectedNeighbors = healthyNeighbors.shuffled().prefix(randomCount)
+                    let numberOfInfections = min(self.infectionFactor, healthyNeighbors.count)
+                    let infectedNeighbors = healthyNeighbors.shuffled().prefix(numberOfInfections)
                     
                     newInfected.formUnion(infectedNeighbors)
                 }
@@ -223,23 +223,25 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             }
         }
     }
+
+
+
     
     private func getNeighbors(of index: Int) -> [Int] {
-        let rows = groupSize / columns
+        let coordinates = [(0, 1), (1, 0), (0, -1), (-1, 0)]
         let row = index / columns
         let column = index % columns
         var neighbors = [Int]()
         
-        for rowOffset in -1..<2 {
-            for columnOffset in -1..<2 {
-                if rowOffset == 0 && columnOffset == 0 { continue }
-                let newRow = row + rowOffset
-                let newColumn = column + columnOffset
-                if newRow >= 0 && newRow < rows && newColumn >= 0 && newColumn < columns {
-                    neighbors.append(newRow * columns + newColumn)
-                }
+        for coordinate in coordinates {
+            let newRow = row + coordinate.0
+            let newColumn = column + coordinate.1
+            
+            if newRow >= 0 && newRow < groupSize / columns && newColumn >= 0 && newColumn < columns {
+                neighbors.append(newRow * columns + newColumn)
             }
         }
+        
         return neighbors
     }
 }
