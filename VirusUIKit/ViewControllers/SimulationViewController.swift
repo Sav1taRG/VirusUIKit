@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SimulationViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class SimulationViewController: UIViewController {
     
     // MARK: - Private properties
     
@@ -150,18 +150,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             self?.spreadInfection()
         }
     }
-
-    // MARK: - UICollectionViewDataSource
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return groupSize
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PersonCell.reuseIdentifier, for: indexPath) as! PersonCell
-        cell.configure(with: people[indexPath.item])
-        return cell
-    }
     
     // MARK: - UICollectionViewDelegate
     
@@ -171,18 +159,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             collectionView.reloadItems(at: [indexPath])
         }, completion: nil)
     }
-    
-    // MARK: - UICollectionViewDelegateFlowLayout
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let screenWidth = UIScreen.main.bounds.width
-        let totalSpacing = CGFloat(columns - 1) * 10
-        let baseWidth = (screenWidth - totalSpacing) / CGFloat(columns)
-        let width = baseWidth * scale
-        let height = width
-        return CGSize(width: width, height: height)
-    }
-
     
     // MARK: - Infection logic methods
     
@@ -223,9 +199,6 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             }
         }
     }
-
-
-
     
     private func getNeighbors(of index: Int) -> [Int] {
         let coordinates = [(0, 1), (1, 0), (0, -1), (-1, 0)]
@@ -238,10 +211,39 @@ class SimulationViewController: UIViewController, UICollectionViewDelegate, UICo
             let newColumn = column + coordinate.1
             
             if newRow >= 0 && newRow < groupSize / columns && newColumn >= 0 && newColumn < columns {
-                neighbors.append(newRow * columns + newColumn)
+                let neighborIndex = newRow * columns + newColumn
+                
+                if (row == newRow && abs(column - newColumn) == 1) || (column == newColumn && abs(row - newRow) == 1) {
+                    neighbors.append(neighborIndex)
+                }
             }
         }
         
         return neighbors
+    }
+}
+// MARK: - UICollectionViewDataSource
+extension SimulationViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return groupSize
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PersonCell.reuseIdentifier, for: indexPath) as! PersonCell
+        cell.configure(with: people[indexPath.item])
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension SimulationViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let screenWidth = UIScreen.main.bounds.width
+        let totalSpacing = CGFloat(columns - 1) * 10
+        let baseWidth = (screenWidth - totalSpacing) / CGFloat(columns)
+        let width = baseWidth * scale
+        let height = width
+        return CGSize(width: width, height: height)
     }
 }
